@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <!-- 继承父工程的统一版本、依赖管理和插件管理。 -->
+        <groupId>com.heizi</groupId>
+        <artifactId>spring-ai-learn</artifactId>
+        <!-- 子模块父版本统一使用 ${revision}，实际值只在父 pom.xml 中维护。 -->
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>spring-ai</artifactId>
+    <name>spring-ai</name>
+    <description>Spring AI module</description>
+
+    <dependencies>
+        <!-- common 模块版本由父工程 dependencyManagement 统一管理。 -->
+        <dependency>
+            <groupId>com.heizi</groupId>
+            <artifactId>common</artifactId>
+        </dependency>
+
+        <!-- Web 模块：提供 REST Controller、JSON 请求响应和内嵌 Web 容器能力。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- Lombok：用于 @Slf4j 等注解，简化样板代码。 -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- Spring AI 智普 依赖版本由父工程引入的 spring-ai-bom 统一管理。 -->
+        <dependency>
+            <groupId>org.springframework.ai</groupId>
+            <artifactId>spring-ai-starter-model-zhipuai</artifactId>
+        </dependency>
+
+        <!-- 版本由 Spring Boot 父工程统一管理。 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!-- Spring Boot 打包插件：版本由 Spring Boot 父工程统一管理。 -->
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

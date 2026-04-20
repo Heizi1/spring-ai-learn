@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <!-- Spring Boot 父工程：统一管理 Spring Boot 生态依赖和插件版本。 -->
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.5.13</version>
+        <!-- Spring Boot 父工程来自 Maven 仓库，不从当前工程的上级目录查找。 -->
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+    <groupId>com.heizi</groupId>
+    <artifactId>spring-ai-learn</artifactId>
+    <!-- 当前工程统一版本号，实际值在 properties.revision 中维护。 -->
+    <version>${revision}</version>
+    <packaging>pom</packaging>
+    <name>ai-parent</name>
+    <description>Parent project for AI modules</description>
+
+
+    <properties>
+        <!-- 项目统一版本号：父工程、子模块、模块间依赖都使用该版本。 -->
+        <revision>0.0.1</revision>
+        <!-- Java 版本：Spring Boot 3 要求 JDK 17+。 -->
+        <java.version>17</java.version>
+        <!-- flatten 插件版本：用于安装或发布时生成可被外部项目消费的 POM。 -->
+        <flatten-maven-plugin.version>1.7.0</flatten-maven-plugin.version>
+        <!-- Hutool 版本：统一管理公共工具包版本。 -->
+        <hutool.version>5.8.38</hutool.version>
+        <!-- Spring AI 版本：通过 spring-ai-bom 统一管理 Spring AI 相关依赖版本。 -->
+        <spring-ai.version>1.1.4</spring-ai.version>
+    </properties>
+    <modules>
+        <!-- 公共模块：放通用返回体、异常、枚举、常量等基础类。 -->
+        <module>common</module>
+        <!-- Spring AI 业务模块：依赖 common，并集成 Spring AI 能力。 -->
+        <module>spring-ai</module>
+    </modules>
+    <dependencyManagement>
+        <dependencies>
+            <!-- 管理 common 模块版本：业务模块依赖 common 时不需要再写 version。 -->
+            <dependency>
+                <groupId>com.heizi</groupId>
+                <artifactId>common</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- 管理 spring-ai 模块版本：后续其他模块依赖 spring-ai 时不需要再写 version。 -->
+            <dependency>
+                <groupId>com.heizi</groupId>
+                <artifactId>spring-ai</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <!-- Hutool 工具包：统一管理全局使用的工具类库版本。 -->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
+            </dependency>
+            <!-- Spring AI BOM：统一管理 org.springframework.ai 下各依赖的兼容版本。 -->
+            <dependency>
+                <groupId>org.springframework.ai</groupId>
+                <artifactId>spring-ai-bom</artifactId>
+                <version>${spring-ai.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <!--
+                    flatten 插件用于支持 ${revision} 这种统一版本写法。
+                    install/deploy 时会生成展开后的 POM，避免外部解析依赖时找不到 ${revision} 或父 POM。
+                -->
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>flatten-maven-plugin</artifactId>
+                <version>${flatten-maven-plugin.version}</version>
+                <configuration>
+                    <!-- ossrh 模式会生成适合安装、发布、被其他项目依赖的扁平 POM。 -->
+                    <flattenMode>ossrh</flattenMode>
+                    <!-- 构建过程中使用生成的扁平 POM，源码中的 pom.xml 不会被提交替换。 -->
+                    <updatePomFile>true</updatePomFile>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>flatten</id>
+                        <!-- 在资源处理阶段生成扁平 POM，后续 package/install/deploy 可直接使用。 -->
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>flatten</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>flatten-clean</id>
+                        <!-- clean 时清理 flatten 插件生成的临时文件。 -->
+                        <phase>clean</phase>
+                        <goals>
+                            <goal>clean</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>

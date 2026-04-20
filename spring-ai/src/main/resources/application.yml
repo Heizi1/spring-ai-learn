@@ -1,0 +1,24 @@
+spring:
+  application:
+    name: spring-ai
+  output:
+    ansi:
+      enabled: always
+  ai:
+    zhipuai:
+      api-key: ${ZHIPUAI_API_KEY}
+      base-url: https://open.bigmodel.cn/api/paas
+      chat:
+        options:
+          model: glm-4.7-flash
+
+logging:
+  level:
+    root: info
+    com.heizi.ai: debug
+    org.springframework.ai: info
+  file:
+    name: logs/spring-ai/spring.log
+  pattern:
+    console: "%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%-5level) %clr([%thread]){magenta} %clr(%logger{36}){cyan} %clr(-){faint} %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss.SSS} %-5level [%thread] %logger{36} - %msg%n"
