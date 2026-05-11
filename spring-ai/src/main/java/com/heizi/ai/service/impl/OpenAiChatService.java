@@ -5,6 +5,7 @@ import com.heizi.ai.service.ChatService;
 import com.heizi.common.exception.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.ai.chat.client.ChatClient;
+import org.springframework.ai.chat.client.advisor.SimpleLoggerAdvisor;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -28,6 +29,7 @@ public class OpenAiChatService implements ChatService {
 
         String content = chatClient.prompt()
                 .user(message)
+                .advisors(new SimpleLoggerAdvisor())
                 .call()
                 .content();
 

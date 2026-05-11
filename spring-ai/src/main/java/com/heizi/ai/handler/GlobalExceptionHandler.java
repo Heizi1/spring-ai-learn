@@ -6,6 +6,7 @@ import com.heizi.common.exception.BusinessException;
 import com.heizi.common.result.ApiResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
@@ -18,6 +19,18 @@ public class GlobalExceptionHandler {
         log.warn("业务异常，method={}, uri={}, code={}, message={}",
                 request.getMethod(), buildRequestUri(request), exception.getCode(), exception.getMessage());
         return ApiResponse.fail(exception.getCode(), exception.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ApiResponse<Void> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception,
+                                                                   HttpServletRequest request) {
+        String message = exception.getBindingResult().getFieldErrors().stream()
+                .findFirst()
+                .map(error -> error.getDefaultMessage() == null ? "参数校验失败" : error.getDefaultMessage())
+                .orElse("参数校验失败");
+        log.warn("参数校验失败，method={}, uri={}, message={}",
+                request.getMethod(), buildRequestUri(request), message);
+        return ApiResponse.fail(ResultCode.BAD_REQUEST.getCode(), message);
     }
 
     @ExceptionHandler(Exception.class)
